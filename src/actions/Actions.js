@@ -1,8 +1,8 @@
 export function insertScore(num, mod) {
     return {
             type: 'INSERT_SCORE',
-            num: num,
-            mod: mod
+            num: Number(num),
+            mod: Number(mod)
         };
 }
 export function startGame(config) {

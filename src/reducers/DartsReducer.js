@@ -35,7 +35,10 @@ Store data format:
 
 export default function reducer(state={
     // ez a defaut state
-    users: []
+    game: {
+        name: "Not started yet"
+    },
+    players: []
 }, action) {
 
     switch (action.type) {
@@ -65,10 +68,10 @@ export default function reducer(state={
                 // subtract the whole round
                 var roundScore = 0;
                 currentRound.throws.map(t => {roundScore += t.num * t.mod});
-                currentPlayer.score -= roundScore;
+                currentPlayer.score += roundScore;
             } else {
                 // add the score
-                currentPlayer.score += currentThrow;
+                currentPlayer.score -= currentThrow;
             }
 
             if (currentRound.throws.length == 3) {
@@ -81,6 +84,7 @@ export default function reducer(state={
                 if (currentRound.throws.length == 2) {
                     switchToNextPlayer = true;
                 }
+                currentRound.valid = roundValid;
                 currentRound.throws.push({num:num, mod: mod});
             }
 
