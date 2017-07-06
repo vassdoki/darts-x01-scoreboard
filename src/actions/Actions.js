@@ -1,6 +1,13 @@
-export function showTest(szoveg) {
+export function insertScore(num, mod) {
     return {
-            type: 'SHOW_TEST',
-            payload: "teszt szoveg, vagy hello vilag"
+            type: 'INSERT_SCORE',
+            num: num,
+            mod: mod
+        };
+}
+export function startGame(config) {
+    return {
+            type: 'START_GAME',
+            config: config
         };
 }

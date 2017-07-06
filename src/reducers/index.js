@@ -1,8 +1,8 @@
 import { combineReducers } from "redux"
 
-import myApp from "./MyApp"
+import darts from "./DartsReducer"
 
 export default combineReducers({
-    myApp
+    darts
 })
 
