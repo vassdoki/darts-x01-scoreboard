@@ -12,12 +12,14 @@ class App extends Component {
 
     onMessage = (message) => {
         let parsedMessage = JSON.parse(message);
-        if (parsedMessage.command === 'start' || parsedMessage.command === 'restart' || parsedMessage.command === 'started') {
+        if (parsedMessage.command === 'start' || parsedMessage.command === 'started') {
             if (parsedMessage.game.name === "501") {
                 this.props.dispatch(startGame(parsedMessage));
             } else {
-                location.reload();
+                document.location.href="/game/scoreboard";
             }
+        } else if (parsedMessage.command === 'restart') {
+            document.location.href="/game/scoreboard";
         } else if (parsedMessage.command === 'insert_throw') {
             this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id));
         } else if (parsedMessage.command === 'edit_throw') {
@@ -53,6 +55,11 @@ class App extends Component {
             }
             return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={Math.random()}/>
         });
+        var stat = 0;
+        if (sv.game.throwCount > 0) {
+            stat = (sv.game.throwCount - sv.game.editedCount) / sv.game.throwCount;
+            stat = "" + (Math.round(stat * 100)) + "% (" + sv.game.throwCount + "/" + sv.game.editedCount + ")";
+        }
         return (
             <div id="scoreboard" className="container-fluid">
                 <div className="row title">
@@ -62,6 +69,8 @@ class App extends Component {
                 <div className={rowClass}>
                 {players}
                 </div>
+                <div id="stat">{ stat }</div>
+                <div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>
 
                 <Websocket url={'ws://'+window.location.hostname+':8080/ws'} onMessage={this.onMessage}/>
             </div>

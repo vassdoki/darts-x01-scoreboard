@@ -264,3 +264,18 @@ h1 {
         margin-bottom: 0;
     }
 }
+
+#stat {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    color: yellow;
+    font-size: 35pt;
+}
+#imind {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    margin: 6px;
+    opacity: 0.8;
+}

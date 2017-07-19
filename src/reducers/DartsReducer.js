@@ -8,6 +8,8 @@ Store data format:
       doubleOut: true/false,
       doubleIn: true/false,
       currentPlayerCount: 0-x,
+      throwCount: 0-x, // number of all throws
+      editedCount: 0-x, // number of edited throws
    },
    players: [
        {
@@ -55,13 +57,7 @@ export default function reducer(state={
         case "START_GAME": {
             var config = action.config;
             var ns = {};
-            ns["game"] = {
-                name: config.game.name,
-                startScore: 301,
-                doubleIn: false,
-                doubleOut: true,
-                currentPlayerCount: 0
-            };
+            ns["game"] = parseConfig(config.game);
             ns["players"] = mapObject(config.game.players, (playerId, player) => {
                 return {
                     id: player.id,
@@ -90,6 +86,7 @@ export default function reducer(state={
 }
 
 function editThrow(ns, num, mod, id) {
+    ns.game.editedCount++;
     ns.players.forEach(p => {
         p.rounds.forEach(r => {
             r.throws.forEach(t => {
@@ -107,7 +104,7 @@ function editThrow(ns, num, mod, id) {
 function reCount(p, ns) {
     var score = ns.game.startScore;
     p.rounds.forEach(r => {
-        var roundSum = r.throws.reduce((a, t) => a += t.num * t.mod, 0)
+        var roundSum = r.throws.reduce((a, t) => a += t.num * t.mod, 0);
         if (score - roundSum < 0) {
             r.valid = false;
         } else if (score - roundSum === 0 && ns.game.doubleOut && r.throws[r.throws.length-1].mod !== 2) {
@@ -120,6 +117,7 @@ function reCount(p, ns) {
     p.score = score;
 }
 function insertThrow(ns, num, mod, id) {
+    ns.game.throwCount++;
     var switchToNextPlayer = false; // switch to next player if this is the third throw
     var roundValid = true;
 
@@ -131,35 +129,36 @@ function insertThrow(ns, num, mod, id) {
     var currentRound = currentPlayer.rounds[currentPlayer.rounds.length - 1];
 
     var currentThrow = num * mod;
-    if (currentPlayer.score - currentThrow < 0) {
-        roundValid = false;
-    }
-    if (currentPlayer.score - currentThrow === 0 && ns.game.doubleOut && mod !== 2) {
-        roundValid = false;
-    }
-    if (roundValid === false) {
-        // subtract the whole round
-        // var roundScore = 0;
-        // currentRound.throws.map(t => {roundScore += t.num * t.mod});
-        var roundScore = currentRound.throws.reduce((a, t) => a + (t.num * t.mod), 0);
-        currentPlayer.score += roundScore;
+    if (currentRound.valid) {
+        if (currentPlayer.score - currentThrow < 0) {
+            roundValid = false;
+        }
+        if (currentPlayer.score - currentThrow === 0 && ns.game.doubleOut && mod !== 2) {
+            roundValid = false;
+        }
+        if (roundValid === false) {
+            if (currentRound.valid) {
+                var roundScore = currentRound.throws.reduce((a, t) => a + (t.num * t.mod), 0);
+                currentPlayer.score += roundScore;
+            }
+        } else {
+            // add the score
+            currentPlayer.score -= currentThrow;
+        }
     } else {
-        // add the score
-        currentPlayer.score -= currentThrow;
+        roundValid = false;
     }
 
+
+    currentRound.valid = roundValid;
+    currentRound.throws.push({num:num, mod: mod, id: id});
     if (currentRound.throws.length === 3) {
+        switchToNextPlayer = true;
         currentPlayer.rounds.push({
             count: currentRound.count + 1,
-            valid: roundValid,
-            throws: [{num:num, mod: mod, id: id}]
+            valid: true,
+            throws: []
         });
-    } else {
-        if (currentRound.throws.length === 2) {
-            switchToNextPlayer = true;
-        }
-        currentRound.valid = roundValid;
-        currentRound.throws.push({num:num, mod: mod, id: id});
     }
 
     if (switchToNextPlayer) {
@@ -167,4 +166,41 @@ function insertThrow(ns, num, mod, id) {
     }
 
     return ns;
+}
+
+function parseConfig(c) {
+    var res = {
+        name: "",
+        startScore: 0,
+        doubleIn: false,
+        doubleOut: false,
+        currentPlayerCount: 0,
+        throwCount: 0,
+        editedCount: 0
+    };
+    if (c.subType.includes("701")) {
+        res.name="701";
+        res.startScore=701;
+    }
+    if (c.subType.includes("501")) {
+        res.name="501";
+        res.startScore=501;
+    }
+    if (c.subType.includes("301")) {
+        res.name="301";
+        res.startScore=301;
+    }
+    if (c.subType.includes("doubleOut")) {
+        res.doubleOut=true;
+        res.name += " Double-Out"
+    } else {
+        res.doubleOut=false;
+    }
+    if (c.subType.includes("doubleIn")) {
+        res.doubleIn=true;
+        res.name += " Double-In"
+    } else {
+        res.doubleIn=false;
+    }
+    return res;
 }
