@@ -17,6 +17,9 @@ export default class Round extends React.Component {
             a += t.num * t.mod;
             return a;
         }, 0);
+        if (this.props.data.throws.length === 0) {
+            roundSum = ""
+        }
         if (!this.props.data.valid) {
             roundSum = 0;
         }
