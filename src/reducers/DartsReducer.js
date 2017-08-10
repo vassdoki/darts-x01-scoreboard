@@ -133,7 +133,7 @@ function insertThrow(ns, num, mod, id) {
         if (currentPlayer.score - currentThrow < 0) {
             roundValid = false;
         }
-        if (currentPlayer.score - currentThrow === 0 && ns.game.doubleOut && mod !== 2) {
+        if (currentPlayer.score - currentThrow < 2 && ns.game.doubleOut && mod !== 2) {
             roundValid = false;
         }
         if (roundValid === false) {
