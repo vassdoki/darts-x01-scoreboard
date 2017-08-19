@@ -14,6 +14,12 @@ export function editScore(num, mod, id) {
             id: id
         };
 }
+export function nextPlayer(playerId) {
+    return {
+            type: 'NEXT_PLAYER',
+            playerId: playerId
+        };
+}
 export function startGame(config) {
     return {
             type: 'START_GAME',

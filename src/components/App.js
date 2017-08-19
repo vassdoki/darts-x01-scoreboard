@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Websocket from 'react-websocket';
 
 import {connect} from "react-redux";
-import {insertScore, startGame, editScore} from "../actions/Actions";
+import {insertScore, startGame, editScore, nextPlayer} from "../actions/Actions";
 import Player from "./Player";
 
 class App extends Component {
@@ -24,6 +24,8 @@ class App extends Component {
             this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id));
         } else if (parsedMessage.command === 'edit_throw') {
             this.props.dispatch(editScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id));
+        } else if (parsedMessage.command === 'next_player') {
+            this.props.dispatch(nextPlayer(parsedMessage.playerId));
         } else {
             console.log("Unknown message from server");
             console.log(parsedMessage);

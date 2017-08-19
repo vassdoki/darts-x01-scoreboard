@@ -54,6 +54,19 @@ export default function reducer(state={
         case "EDIT_SCORE": {
             return editThrow({...state}, action.num, action.mod, action.id);
         }
+        case "NEXT_PLAYER": {
+            var nextState = {...state}
+
+            var currRound = nextState.players[nextState.game.currentPlayerCount].rounds
+            currRound.push({
+                count: currRound.count + 1,
+                valid: true,
+                throws: []
+            });
+
+            nextState.game.currentPlayerCount = (nextState.game.currentPlayerCount + 1) % nextState.players.length;
+            return nextState
+        }
         case "START_GAME": {
             var config = action.config;
             var ns = {};
@@ -128,31 +141,32 @@ function insertThrow(ns, num, mod, id) {
     }
     var currentRound = currentPlayer.rounds[currentPlayer.rounds.length - 1];
 
-    var currentThrow = num * mod;
-    if (currentRound.valid) {
-        if (currentPlayer.score - currentThrow < 0) {
-            roundValid = false;
-        }
-        if (currentPlayer.score - currentThrow < 2 && ns.game.doubleOut && mod !== 2) {
-            roundValid = false;
-        }
-        if (roundValid === false) {
-            if (currentRound.valid) {
-                var roundScore = currentRound.throws.reduce((a, t) => a + (t.num * t.mod), 0);
-                currentPlayer.score += roundScore;
+    if (mod !== -1) {
+        var currentThrow = num * mod;
+        if (currentRound.valid) {
+            if (currentPlayer.score - currentThrow < 0) {
+                roundValid = false;
+            }
+            if (currentPlayer.score - currentThrow < 2 && ns.game.doubleOut && mod !== 2) {
+                roundValid = false;
+            }
+            if (roundValid === false) {
+                if (currentRound.valid) {
+                    var roundScore = currentRound.throws.reduce((a, t) => a + (t.num * t.mod), 0);
+                    currentPlayer.score += roundScore;
+                }
+            } else {
+                // add the score
+                currentPlayer.score -= currentThrow;
             }
         } else {
-            // add the score
-            currentPlayer.score -= currentThrow;
+            roundValid = false;
         }
-    } else {
-        roundValid = false;
+        currentRound.valid = roundValid;
+        currentRound.throws.push({num:num, mod: mod, id: id});
     }
 
-
-    currentRound.valid = roundValid;
-    currentRound.throws.push({num:num, mod: mod, id: id});
-    if (currentRound.throws.length === 3) {
+    if (currentRound.throws.length === 3 || mod === -1) { //  || mod === -1
         switchToNextPlayer = true;
         currentPlayer.rounds.push({
             count: currentRound.count + 1,
