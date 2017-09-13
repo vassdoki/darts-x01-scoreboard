@@ -12,8 +12,8 @@ class App extends Component {
 
     onMessage = (message) => {
         let parsedMessage = JSON.parse(message);
-        if (parsedMessage.command === 'start' || parsedMessage.command === 'started') {
-            if (parsedMessage.game.name === "501") {
+        if (parsedMessage.command === 'start' || parsedMessage.command === 'started' || parsedMessage.command === 'refresh_game') {
+            if (parsedMessage.game.gameType === "x01") {
                 this.props.dispatch(startGame(parsedMessage));
             } else {
                 document.location.href="/game/scoreboard";
@@ -57,7 +57,7 @@ class App extends Component {
         }
         const players = sv.players.map((p, i) => {
             var row3class = "";
-            if (i === sv.game.currentPlayerCount && sv.players.length > 1) {
+            if (i === sv.game.currentPlayer && sv.players.length > 1) {
                 row3class = "active";
             }
             return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={Math.random()} onWin={this.onWinGame.bind(this)} winner={sv.game.winner}/>
@@ -67,6 +67,7 @@ class App extends Component {
             stat = (sv.game.throwCount - sv.game.editedCount) / sv.game.throwCount;
             stat = "" + (Math.round(stat * 100)) + "% (" + sv.game.throwCount + "/" + sv.game.editedCount + ")";
         }
+        // TODO board id not implemented yet!
         return (
             <div id="scoreboard" className="container-fluid">
                 <div className="row title">
@@ -79,7 +80,7 @@ class App extends Component {
                 <div id="stat">{ stat }</div>
                 <div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>
 
-                <Websocket url={'ws://'+window.location.hostname+':8080/ws'} onMessage={this.onMessage}/>
+                <Websocket url={'ws://'+window.location.hostname+':9000/ws/1'} onMessage={this.onMessage}/>
             </div>
         );
     }

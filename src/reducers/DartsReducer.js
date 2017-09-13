@@ -7,7 +7,7 @@ Store data format:
       startScore: 301,
       doubleOut: true/false,
       doubleIn: true/false,
-      currentPlayerCount: 0-x,
+      currentPlayer: 0-x,
       throwCount: 0-x, // number of all throws
       editedCount: 0-x, // number of edited throws
    },
@@ -51,7 +51,7 @@ export default function reducer(state={
         case "WIN_GAME": {
             const cp = action.player
             const stat = createStat(cp)
-            fetch("http://localhost:8080/cam/win?winner=" + cp.name + "&round_count=" + cp.rounds.length + "&throw_count=" + stat.throwCount + "&throw_average=" + (stat.sum / stat.throwCount) + "&throw_sum=" + stat.sum)
+            fetch("http://localhost:9000/command/win?winner=" + cp.name + "&round_count=" + cp.rounds.length + "&throw_count=" + stat.throwCount + "&throw_average=" + (stat.sum / stat.throwCount) + "&throw_sum=" + stat.sum)
             var newGameState = state
             newGameState.game.winner = cp.name
             return newGameState
@@ -65,14 +65,14 @@ export default function reducer(state={
         case "NEXT_PLAYER": {
             var nextState = {...state}
 
-            var currRound = nextState.players[nextState.game.currentPlayerCount].rounds
+            var currRound = nextState.players[nextState.game.currentPlayer].rounds
             currRound.push({
                 count: currRound.count + 1,
                 valid: true,
                 throws: []
             });
 
-            nextState.game.currentPlayerCount = (nextState.game.currentPlayerCount + 1) % nextState.players.length;
+            nextState.game.currentPlayer = (nextState.game.currentPlayer + 1) % nextState.players.length;
             return nextState
         }
         case "START_GAME": {
@@ -97,6 +97,7 @@ export default function reducer(state={
                     }
                 }
             }
+            ns["game"].currentPlayer = config.game.currentPlayer
             return ns;
         }
         default: {
@@ -156,7 +157,7 @@ function insertThrow(ns, num, mod, id) {
     var roundValid = true;
 
     // store the new throw
-    var currentPlayer = ns.players[ns.game.currentPlayerCount];
+    var currentPlayer = ns.players[ns.game.currentPlayer];
     if (currentPlayer.rounds.length === 0) {
         currentPlayer.rounds.push({count:1, valid: roundValid, throws:[]});
     }
@@ -197,7 +198,7 @@ function insertThrow(ns, num, mod, id) {
     }
 
     if (switchToNextPlayer) {
-        ns.game.currentPlayerCount = (ns.game.currentPlayerCount + 1) % ns.players.length;
+        ns.game.currentPlayer = (ns.game.currentPlayer + 1) % ns.players.length;
     }
 
     return ns;
@@ -209,29 +210,29 @@ function parseConfig(c) {
         startScore: 0,
         doubleIn: false,
         doubleOut: false,
-        currentPlayerCount: 0,
+        currentPlayer: 0,
         throwCount: 0,
         editedCount: 0
     };
-    if (c.subType.includes("701")) {
+    if (c.subtype.includes("701")) {
         res.name="701";
         res.startScore=701;
     }
-    if (c.subType.includes("501")) {
+    if (c.subtype.includes("501")) {
         res.name="501";
         res.startScore=501;
     }
-    if (c.subType.includes("301")) {
+    if (c.subtype.includes("301")) {
         res.name="301";
         res.startScore=301;
     }
-    if (c.subType.includes("doubleOut")) {
+    if (c.subtype.includes("doubleOut")) {
         res.doubleOut=true;
         res.name += " Double-Out"
     } else {
         res.doubleOut=false;
     }
-    if (c.subType.includes("doubleIn")) {
+    if (c.subtype.includes("doubleIn")) {
         res.doubleIn=true;
         res.name += " Double-In"
     } else {
