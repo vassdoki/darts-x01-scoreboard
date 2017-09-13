@@ -26,3 +26,9 @@ export function startGame(config) {
             config: config
         };
 }
+export function winGame(player) {
+    return {
+        type: 'WIN_GAME',
+        player: player
+    };
+}

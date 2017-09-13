@@ -48,6 +48,14 @@ export default function reducer(state={
 }, action) {
 
     switch (action.type) {
+        case "WIN_GAME": {
+            const cp = action.player
+            const stat = createStat(cp)
+            fetch("http://localhost:8080/cam/win?winner=" + cp.name + "&round_count=" + cp.rounds.length + "&throw_count=" + stat.throwCount + "&throw_average=" + (stat.sum / stat.throwCount) + "&throw_sum=" + stat.sum)
+            var newGameState = state
+            newGameState.game.winner = cp.name
+            return newGameState
+        }
         case "INSERT_SCORE": {
             return insertThrow({...state}, action.num, action.mod, action.id);
         }
@@ -71,6 +79,7 @@ export default function reducer(state={
             var config = action.config;
             var ns = {};
             ns["game"] = parseConfig(config.game);
+            ns["game"].winner = ""
             ns["players"] = mapObject(config.game.players, (playerId, player) => {
                 return {
                     id: player.id,
@@ -113,6 +122,18 @@ function editThrow(ns, num, mod, id) {
         })
     });
     return ns;
+}
+function createStat(p) {
+    var throwCount = 0
+    var sum = 0
+    p.rounds.forEach(r => {
+        if (r.valid) {
+            sum += r.throws.reduce((a, t) => a += t.num * t.mod, 0);
+            console.log("throwCount: " + throwCount + " length:" + r.throws.length)
+            throwCount += r.throws.length
+        }
+    });
+    return {throwCount: throwCount, sum:sum}
 }
 function reCount(p, ns) {
     var score = ns.game.startScore;

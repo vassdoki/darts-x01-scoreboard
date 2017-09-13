@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Websocket from 'react-websocket';
 
 import {connect} from "react-redux";
-import {insertScore, startGame, editScore, nextPlayer} from "../actions/Actions";
+import {insertScore, startGame, editScore, nextPlayer, winGame} from "../actions/Actions";
 import Player from "./Player";
 
 class App extends Component {
@@ -32,6 +32,11 @@ class App extends Component {
         }
     }
 
+    onWinGame = function(player) {
+        console.log("on win game")
+        this.props.dispatch(winGame(player));
+    }
+
     render() {
         var sv = this.props.darts;
 
@@ -55,7 +60,7 @@ class App extends Component {
             if (i === sv.game.currentPlayerCount && sv.players.length > 1) {
                 row3class = "active";
             }
-            return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={Math.random()}/>
+            return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={Math.random()} onWin={this.onWinGame.bind(this)} winner={sv.game.winner}/>
         });
         var stat = 0;
         if (sv.game.throwCount > 0) {
