@@ -1,9 +1,11 @@
-export function insertScore(num, mod, id) {
+export function insertScore(num, mod, id, cp, round) {
     return {
             type: 'INSERT_SCORE',
             num: Number(num),
             mod: Number(mod),
-            id: id
+            id: id,
+            currentPlayer: cp,
+            round: round
         };
 }
 export function editScore(num, mod, id) {

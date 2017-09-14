@@ -53,6 +53,9 @@ ul {
     background-color: #2e2d4c;
     text-decoration: line-through;
 }
+.label-none {
+    background-color: #224750;
+}
 .title {
     display: flex;
     flex-direction: column;

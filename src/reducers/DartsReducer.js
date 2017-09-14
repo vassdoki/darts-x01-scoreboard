@@ -59,7 +59,7 @@ export default function reducer(state={
             return newGameState
         }
         case "INSERT_SCORE": {
-            return insertThrow({...state}, action.num, action.mod, action.id);
+            return insertThrow({...state}, action.num, action.mod, action.id, 0, action.currentPlayer, action.round);
         }
         case "EDIT_SCORE": {
             return editThrow({...state}, action.num, action.mod, action.id);
@@ -92,11 +92,16 @@ export default function reducer(state={
                 }
             });
 
-            for(var i = 0; i < Object.keys(config.game.players["0"].rounds).length; i++) {
-                for(var j = 0; j < Object.keys(config.game.players).length; j++) {
-                    if (Object.keys(config.game.players["" + j].rounds).length > i && Object.keys(config.game.players["" + j].rounds["" + i].throws).length > 0) {
-                        var throws = config.game.players["" + j].rounds["" + i].throws;
-                        mapObject(throws, (key, t) => insertThrow(ns, t.score, t.modifier, t.id, t.editedCount));
+            for(var roundNum = 0; roundNum < Object.keys(config.game.players["0"].rounds).length; roundNum++) {
+                for(var playerNum = 0; playerNum < Object.keys(config.game.players).length; playerNum++) {
+                    if (Object.keys(config.game.players[playerNum].rounds).length > roundNum) {
+                        if (Object.keys(config.game.players[playerNum].rounds[roundNum].throws).length > 0) {
+                            var throws = config.game.players[playerNum].rounds[roundNum].throws;
+                            mapObject(throws, (key, t) => insertThrow(ns, t.score, t.modifier, t.id, t.editedCount, playerNum, roundNum));
+                        } else {
+                            // this round has no throws
+                            ns["players"][playerNum].rounds.push({count:roundNum+1, valid: true, throws:[]});
+                        }
                     }
                 }
             }
@@ -127,6 +132,7 @@ function editThrow(ns, num, mod, id) {
     });
     return ns;
 }
+
 function createStat(p) {
     var throwCount = 0
     var sum = 0
@@ -154,7 +160,7 @@ function reCount(p, ns) {
     });
     p.score = score;
 }
-function insertThrow(ns, num, mod, id, editedCount) {
+function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     ns.game.throwCount++;
     var switchToNextPlayer = false; // switch to next player if this is the third throw
     var roundValid = true;
@@ -164,9 +170,15 @@ function insertThrow(ns, num, mod, id, editedCount) {
     }
 
     // store the new throw
+    ns.game.currentPlayer = currentPlayerNum
     var currentPlayer = ns.players[ns.game.currentPlayer];
     if (currentPlayer.rounds.length === 0) {
         currentPlayer.rounds.push({count:1, valid: roundValid, throws:[]});
+    }
+    if (round > 0) {
+        while(currentPlayer.rounds.length <= round) {
+            currentPlayer.rounds.push({count:currentPlayer.rounds.length, valid: roundValid, throws:[]});
+        }
     }
     var currentRound = currentPlayer.rounds[currentPlayer.rounds.length - 1];
 
@@ -197,11 +209,6 @@ function insertThrow(ns, num, mod, id, editedCount) {
 
     if (currentRound.throws.length === 3 || mod === -1) { //  || mod === -1
         switchToNextPlayer = true;
-        currentPlayer.rounds.push({
-            count: currentRound.count + 1,
-            valid: true,
-            throws: []
-        });
     }
 
     if (switchToNextPlayer) {

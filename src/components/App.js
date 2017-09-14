@@ -6,10 +6,6 @@ import {insertScore, startGame, editScore, nextPlayer, winGame} from "../actions
 import Player from "./Player";
 
 class App extends Component {
-    addThrow() {
-        this.props.dispatch(insertScore(document.getElementById("num").value, document.getElementById("mod").value));
-    }
-
     onMessage = (message) => {
         let parsedMessage = JSON.parse(message);
         if (parsedMessage.command === 'start' || parsedMessage.command === 'started' || parsedMessage.command === 'refresh_game') {
@@ -21,7 +17,7 @@ class App extends Component {
         } else if (parsedMessage.command === 'restart') {
             document.location.href="/game/scoreboard";
         } else if (parsedMessage.command === 'insert_throw') {
-            this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id));
+            this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id, parsedMessage.currentPlayer, parsedMessage.round));
         } else if (parsedMessage.command === 'edit_throw') {
             this.props.dispatch(editScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id));
         } else if (parsedMessage.command === 'next_player') {
@@ -60,7 +56,8 @@ class App extends Component {
             if (i === sv.game.currentPlayer && sv.players.length > 1) {
                 row3class = "active";
             }
-            return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={Math.random()} onWin={this.onWinGame.bind(this)} winner={sv.game.winner}/>
+            var id = "player" + i
+            return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={id} onWin={this.onWinGame.bind(this)} winner={sv.game.winner} roundCount={sv.players[0].rounds.length}/>
         });
         var stat = 0;
         if (sv.game.throwCount > 0) {
