@@ -42,7 +42,9 @@ const mapObject = (object, callback) => {
 export default function reducer(state={
     // ez a defaut state
     game: {
-        name: "Not started yet"
+        name: "Not started yet",
+        editedCount: 0,
+        winner: ""
     },
     players: []
 }, action) {
@@ -80,6 +82,7 @@ export default function reducer(state={
             var ns = {};
             ns["game"] = parseConfig(config.game);
             ns["game"].winner = ""
+            ns["game"].editedCount = 0
             ns["players"] = mapObject(config.game.players, (playerId, player) => {
                 return {
                     id: player.id,
@@ -93,7 +96,7 @@ export default function reducer(state={
                 for(var j = 0; j < Object.keys(config.game.players).length; j++) {
                     if (Object.keys(config.game.players["" + j].rounds).length > i && Object.keys(config.game.players["" + j].rounds["" + i].throws).length > 0) {
                         var throws = config.game.players["" + j].rounds["" + i].throws;
-                        mapObject(throws, (key, t) => insertThrow(ns, t.score, t.modifier, t.id));
+                        mapObject(throws, (key, t) => insertThrow(ns, t.score, t.modifier, t.id, t.editedCount));
                     }
                 }
             }
@@ -151,10 +154,14 @@ function reCount(p, ns) {
     });
     p.score = score;
 }
-function insertThrow(ns, num, mod, id) {
+function insertThrow(ns, num, mod, id, editedCount) {
     ns.game.throwCount++;
     var switchToNextPlayer = false; // switch to next player if this is the third throw
     var roundValid = true;
+
+    if (editedCount > 0) {
+        ns.game.editedCount++;
+    }
 
     // store the new throw
     var currentPlayer = ns.players[ns.game.currentPlayer];
