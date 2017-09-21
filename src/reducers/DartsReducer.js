@@ -10,6 +10,8 @@ Store data format:
       currentPlayer: 0-x,
       throwCount: 0-x, // number of all throws
       editedCount: 0-x, // number of edited throws
+      winner: "", // the name of the winner if the game is over
+      winnerStat: "" // the details of the winner, if it is changed, then submitted again
    },
    players: [
        {
@@ -51,31 +53,19 @@ export default function reducer(state={
 
     switch (action.type) {
         case "WIN_GAME": {
+            var newGameState = {...state}
             const cp = action.player
             const stat = createStat(cp)
-            fetch("http://localhost:9000/command/win?winner=" + cp.name + "&round_count=" + cp.rounds.length + "&throw_count=" + stat.throwCount + "&throw_average=" + (stat.sum / stat.throwCount) + "&throw_sum=" + stat.sum)
-            var newGameState = state
-            newGameState.game.winner = cp.name
+            const param = "winner=" + cp.id + "&round_count=" + cp.rounds.length + "&throw_count=" + stat.throwCount + "&throw_average=" + (stat.sum / stat.throwCount) + "&throw_sum=" + stat.sum
+            if (param !== newGameState.game.winnerStat) {
+                fetch("http://localhost:9000/command/winGame/1?" + param)
+                newGameState.game.winner = cp.name
+                newGameState.game.winnerStat = ""
+            }
             return newGameState
         }
         case "INSERT_SCORE": {
             return insertThrow({...state}, action.num, action.mod, action.id, 0, action.currentPlayer, action.round);
-        }
-        case "EDIT_SCORE": {
-            return editThrow({...state}, action.num, action.mod, action.id);
-        }
-        case "NEXT_PLAYER": {
-            var nextState = {...state}
-
-            var currRound = nextState.players[nextState.game.currentPlayer].rounds
-            currRound.push({
-                count: currRound.count + 1,
-                valid: true,
-                throws: []
-            });
-
-            nextState.game.currentPlayer = (nextState.game.currentPlayer + 1) % nextState.players.length;
-            return nextState
         }
         case "START_GAME": {
             var config = action.config;
@@ -116,23 +106,6 @@ export default function reducer(state={
     }
 }
 
-function editThrow(ns, num, mod, id) {
-    ns.game.editedCount++;
-    ns.players.forEach(p => {
-        p.rounds.forEach(r => {
-            r.throws.forEach(t => {
-                if (t.id === id) {
-                    console.log(t);
-                    t.num = num;
-                    t.mod = mod;
-                    reCount(p, ns);
-                }
-            })
-        })
-    });
-    return ns;
-}
-
 function createStat(p) {
     var throwCount = 0
     var sum = 0
@@ -144,21 +117,6 @@ function createStat(p) {
         }
     });
     return {throwCount: throwCount, sum:sum}
-}
-function reCount(p, ns) {
-    var score = ns.game.startScore;
-    p.rounds.forEach(r => {
-        var roundSum = r.throws.reduce((a, t) => a += t.num * t.mod, 0);
-        if (score - roundSum < 0) {
-            r.valid = false;
-        } else if (score - roundSum === 0 && ns.game.doubleOut && r.throws[r.throws.length-1].mod !== 2) {
-            r.valid = false;
-        } else {
-            score -= roundSum;
-            r.valid = true;
-        }
-    });
-    p.score = score;
 }
 function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     ns.game.throwCount++;

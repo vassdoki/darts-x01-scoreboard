@@ -14,8 +14,10 @@ export default class Round extends React.Component {
                     case 3: throwClass += "label-danger"; break;
                     default: break;
                 }
+                // TODO: RANDOM KEY is bad!
                 thr.push(<li key={Math.random()}><span className={throwClass}>{t.num}</span></li>)
             } else {
+                // TODO: RANDOM KEY is bad!
                 thr.push(<li key={Math.random()}><span className="label-none">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></li>)
             }
         }

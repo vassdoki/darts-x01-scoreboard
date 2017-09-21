@@ -2,7 +2,7 @@
   "name": "doki-test",
   "version": "0.1.0",
   "private": true,
-  "homepage": "/games/501/",
+  "homepage": "/game/501/",
   "dependencies": {
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
