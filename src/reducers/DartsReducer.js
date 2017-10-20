@@ -138,7 +138,7 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
             currentPlayer.rounds.push({count:currentPlayer.rounds.length, valid: roundValid, throws:[]});
         }
     }
-    var currentRound = currentPlayer.rounds[currentPlayer.rounds.length - 1];
+    var currentRound = currentPlayer.rounds[round];
 
     if (mod !== -1) {
         var currentThrow = num * mod;
