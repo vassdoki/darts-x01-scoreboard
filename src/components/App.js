@@ -6,16 +6,37 @@ import {insertScore, startGame, winGame} from "../actions/Actions";
 import Player from "./Player";
 
 class App extends Component {
+    constructor() {
+        super();
+
+        const boardIdMatcher = new RegExp("/game/501/(.*)");
+        const res = boardIdMatcher.exec(document.location.href);
+        let boardId = null;
+        if (res) {
+            boardId = res[1];
+        }
+
+        let proxyPort = window.location.port;
+        if (proxyPort === "3000") {
+            proxyPort = "9000";
+        }
+
+        this.state = {
+            boardId: boardId,
+            proxyPort: proxyPort
+        }
+    }
+
     onMessage = (message) => {
         let parsedMessage = JSON.parse(message);
         if (parsedMessage.command === 'start' || parsedMessage.command === 'started' || parsedMessage.command === 'refresh_game') {
             if (parsedMessage.game.gameType === "x01") {
                 this.props.dispatch(startGame(parsedMessage));
             } else {
-                document.location.href="/game/scoreboard";
+                document.location.href="/game/scoreboard/" + this.state.boardId;
             }
         } else if (parsedMessage.command === 'restart') {
-            document.location.href="/game/scoreboard";
+            document.location.href="/game/scoreboard" + this.state.boardId;
         } else if (parsedMessage.command === 'insert_throw') {
             this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id, parsedMessage.currentPlayer, parsedMessage.round));
         } else {
@@ -60,7 +81,12 @@ class App extends Component {
             stat = (sv.game.throwCount - sv.game.editedCount) / sv.game.throwCount;
             stat = "" + (Math.round(stat * 100)) + "% (" + sv.game.throwCount + "/" + sv.game.editedCount + ")";
         }
-        // TODO board id not implemented yet!
+
+        let proxyPort = window.location.port;
+        if (proxyPort === "3000") {
+            proxyPort = "9000";
+        }
+
         return (
             <div id="scoreboard" className="container-fluid">
                 <div className="row title">
@@ -73,7 +99,7 @@ class App extends Component {
                 <div id="stat">{ stat }</div>
                 <div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>
 
-                <Websocket url={'ws://'+window.location.hostname+':9000/ws/1'} onMessage={this.onMessage}/>
+                <Websocket url={'ws://'+window.location.hostname+':' + this.state.proxyPort + '/ws/' + this.state.boardId} onMessage={this.onMessage}/>
             </div>
         );
     }
