@@ -3,10 +3,9 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import { Provider } from 'react-redux';
 import './assets/style.css';
-
-
 import {store} from './store'
-
+import strings from './utils/localization'
+strings.setLanguage('hu');
 
 ReactDOM.render(
     <Provider store={store}>

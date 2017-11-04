@@ -37,6 +37,8 @@ Store data format:
 }
  */
 
+import strings from '../utils/localization'
+
 const mapObject = (object, callback) => {
     return Object.keys(object).map( key => callback(key, object[key]) )
 };
@@ -186,27 +188,27 @@ function parseConfig(c) {
         throwCount: 0,
         editedCount: 0
     };
-    if (c.subtype.includes("701")) {
+    if (c.subtype.includes("x01_score=701")) {
         res.name="701";
         res.startScore=701;
     }
-    if (c.subtype.includes("501")) {
+    if (c.subtype.includes("x01_score=501")) {
         res.name="501";
         res.startScore=501;
     }
-    if (c.subtype.includes("301")) {
+    if (c.subtype.includes("x01_score=301")) {
         res.name="301";
         res.startScore=301;
     }
-    if (c.subtype.includes("doubleOut")) {
+    if (c.subtype.includes("x01_out=double")) {
         res.doubleOut=true;
-        res.name += " Double-Out"
+        res.name += " " + strings.doubleOut
     } else {
         res.doubleOut=false;
     }
-    if (c.subtype.includes("doubleIn")) {
+    if (c.subtype.includes("x01_in=double")) {
         res.doubleIn=true;
-        res.name += " Double-In"
+        res.name += " " + strings.doubleIn
     } else {
         res.doubleIn=false;
     }
