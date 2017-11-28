@@ -53,12 +53,6 @@ class App extends Component {
     render() {
         var sv = this.props.darts;
 
-        var rowClass = "row ";
-        if (sv.players.length < 3) {
-            rowClass += " lessThan3Player";
-        } else if (sv.players.length > 4) {
-            rowClass += " moreThan4Player";
-        }
         var row2class = "col-xs-6 ";
         switch(sv.players.length) {
             case 1: row2class += "col-xs-offset-3"; break;
@@ -69,9 +63,9 @@ class App extends Component {
             default: break;
         }
         const players = sv.players.map((p, i) => {
-            var row3class = "";
+            var row3class = "one_person";
             if (i === sv.game.currentPlayer && sv.players.length > 1) {
-                row3class = "active";
+                row3class = "one_person active_person";
             }
             var id = "player" + i
             return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={id} onWin={this.onWinGame.bind(this)} winner={sv.game.winner} roundCount={sv.players[0].rounds.length}/>
@@ -89,15 +83,13 @@ class App extends Component {
 
         return (
             <div id="scoreboard" className="container-fluid">
-                <div className="row title">
-                    <h1>{ sv.game.name }</h1>
-                </div>
+                <div className="row title">{ sv.game.name }</div>
 
-                <div className={rowClass}>
+                <div className="row no-gutter">
                 {players}
                 </div>
                 <div id="stat">{ stat }</div>
-                <div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>
+                {/*<div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>*/}
 
                 <Websocket url={'ws://'+window.location.hostname+':' + this.state.proxyPort + '/ws/' + this.state.boardId} onMessage={this.onMessage}/>
             </div>

@@ -7,8 +7,7 @@ export default class Player extends Component{
         this.state = {gameFinished: false, lastSum: -1}
     }
     render () {
-        const rounds = this.props.data.rounds.map((r, i) => <Round key={i} data={ r }/>)
-        var className = "score " + this.props.paramClassName3;
+        const rounds = this.props.data.rounds.map((r, i) => <Round key={i} data={ this.props.data.rounds[this.props.data.rounds.length - i - 1] }/>)
         var sum = this.props.data.score;
         if (sum === 0) {
             sum = "WIN!";
@@ -24,14 +23,15 @@ export default class Player extends Component{
             emptyRound = <Round key={this.props.roundCount -1} data={ {throws:[]} }/>
         }
 
-        return <div className={this.props.paramClassName2}>
-            <div className={className}>
-                <div className="header">{ this.props.data.name}</div>
-                <div className="sum">{ sum }</div>
-                <div className="table-container">
-                    {rounds}
+        return <div className={this.props.paramClassName2 + " " + this.props.paramClassName3}>
+            <h2 className="name">{ this.props.data.name}</h2>
+            <div className="overall_score">{ sum }</div>
+            <div className="details">
+                <table className="table">
+                    <thead><tr><th></th><th></th><th></th><th></th></tr></thead>
                     {emptyRound}
-                </div>
+                    {rounds}
+                </table>
             </div>
         </div>
 
