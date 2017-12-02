@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import './assets/style.css';
 import {store} from './store'
 import strings from './utils/localization'
-strings.setLanguage('hu');
+strings.setLanguage('en');
 
 ReactDOM.render(
     <Provider store={store}>
