@@ -61,6 +61,10 @@ Values:
 
 # Screenshots
 
+Demo video
+
+[![Demo video](https://www.youtube.com/upload_thumbnail?v=otCVqqRWbsA&t=3)](https://youtu.be/otCVqqRWbsA)
+
 Sample image from the scoreboard:
 ![Scoreboard](https://raw.githubusercontent.com/vassdoki/darts-x01-scoreboard/master/html/images/sb.png)
 
