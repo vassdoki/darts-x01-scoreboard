@@ -18,7 +18,11 @@ class App extends Component {
 
         let proxyPort = window.location.port;
         if (proxyPort === "3000") {
+            // running on localhost development environment, connect directly to the local play app
             proxyPort = "9000";
+        } else {
+            // 8090: game.dartsee.com has socat to forward the ws connection
+            proxyPort = "8090";
         }
 
         this.state = {

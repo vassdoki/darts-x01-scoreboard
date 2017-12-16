@@ -16,7 +16,7 @@ touchscreen is necessary. The screen shows a QR code to access the game controll
 
 The user reads the QR code with a mobile phone or tablet. This opens the game controller interface
 in a browser. This is the place to enter player names, select game type and start the game.
-The score can be entered here also, or existing throws can be fixed.
+The score can be entered here also, or previous throws can be changed.
 
 It is easy to connect a throw recognition software to the scoreboard. In this case the
 score is automatically refreshed in the scoreboard and in the game controller.
@@ -29,7 +29,7 @@ it is ready to handle the X01 game.
 Choose a name for your scoreboard. This will connect the scoreboard, the game controller and
 the throw recognition system. No collision is detected, so try to choose a uniqe name.
 
-Open the following URL on your scoreboard screen: http://imdevel1.imind.hu:9099/game/scoreboard/scoreboard_name
+Open the following URL on your scoreboard screen: http://game.dartsee.com/game/scoreboard/scoreboard_name
 This will show the current game, or the QR code for the game controller if there is no running game.
 
 That's all!
@@ -39,7 +39,7 @@ That's all!
 Only one HTTP GET request has to be implemented, to connect the throw recognition software to the
 scoreboard:
 
-http://imdevel1.imind.hu:9099/command/newThrow/scoreboard_name?num=NUM&mod=MOD&x=X&y=Y&cam1img=CAM1IMG&cam2img=CAM2IMG&cam1x=CAM1X&cam2x=CAM2X
+http://game.dartsee.com/command/newThrow/scoreboard_name?num=NUM&mod=MOD&x=X&y=Y&cam1img=CAM1IMG&cam2img=CAM2IMG&cam1x=CAM1X&cam2x=CAM2X
 
 Values:
 
@@ -70,6 +70,11 @@ Sample image from the game controller:
 ![Game controller 2](https://raw.githubusercontent.com/vassdoki/darts-x01-scoreboard/master/html/images/gc2.png)
 ![Game controller 3](https://raw.githubusercontent.com/vassdoki/darts-x01-scoreboard/master/html/images/gc3.png)
 
+# Work in progess / plans
+
+* New game waiting screen. This look ugly right now. This will show TOP lists, news or customizable messages.
+* Data download feature for the board owner. The system will provide a csv file with all the data received for firther analisys.
+* Registration. In the future the scoreboard name will belong to a registration, so no collision will be possible.
 
 
   
