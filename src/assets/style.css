@@ -81,7 +81,7 @@ body {
 .details .btn {
     width: 50px;
     padding: 10px 10px;
-    font-size: 1.4em;
+    font-size: 2em;
 }
 .one_person h1 {
     font-size: 4em;
@@ -89,7 +89,7 @@ body {
 }
 .btn-overall {
     background-color: #242f35;
-    font-size: 1.87em !important;
+    font-size: 2.5em !important;
     padding: 5px !important;
 }
 .btn-missed {
