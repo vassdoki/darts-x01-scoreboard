@@ -4,30 +4,60 @@ import Websocket from 'react-websocket';
 import {connect} from "react-redux";
 import {insertScore, startGame, winGame} from "../actions/Actions";
 import Player from "./Player";
+import strings from '../utils/localization'
+import {parseQueryString} from "../utils/DartseeUtils"
+
 
 class App extends Component {
     constructor() {
         super();
 
-        const boardIdMatcher = new RegExp("/game/501/(.*)");
+        const urlPart = "501";
+        /***********************************************************/
+        /*  this is copied to every project, until a nice solution */
+        const boardIdMatcher = new RegExp(`/game/${urlPart}/(.*)`);
         const res = boardIdMatcher.exec(document.location.href);
+        // TODO: boardId gets the GET parameter also, not very nice
         let boardId = null;
         if (res) {
             boardId = res[1];
         }
 
-        let proxyPort = window.location.port;
-        if (proxyPort === "3000") {
-            // running on localhost development environment, connect directly to the local play app
-            proxyPort = "9000";
-        } else {
-            // 8090: game.dartsee.com has socat to forward the ws connection
-            proxyPort = "8090";
+        const urlp = parseQueryString(window.location.search);
+        let lang = "en";
+        if (urlp["lang"] !== undefined) {
+            lang = urlp["lang"];
+            strings.setLanguage(urlp["lang"]);
         }
+
+        let proxyHost = "";
+        let wsUrl = "";
+        if (window.location.port === "3000") {
+            // running on localhost development environment, connect directly to the local play app
+            proxyHost = "http://localhost:9000";
+            wsUrl = `ws://localhost:9000/ws/${boardId}`;
+        } else {
+            if (window.location.port === 80) {
+                proxyHost = `http://${window.location.hostname}`;
+                wsUrl = `ws://${window.location.hostname}/ws/${boardId}`;
+            } else {
+                proxyHost = `http://${window.location.hostname}:${window.location.port}`;
+                wsUrl = `ws://${window.location.hostname}:${window.location.port}/ws/${boardId}`;
+            }
+        }
+        /* Don't forget to update the state with these variables:
+         boardId: boardId,
+         proxyHost: proxyHost,
+         wsUrl: wsUrl,
+         lang: lang
+         */
+        /***********************************************************/
 
         this.state = {
             boardId: boardId,
-            proxyPort: proxyPort
+            proxyHost: proxyHost,
+            wsUrl: wsUrl,
+            lang: lang
         }
     }
 
@@ -80,11 +110,6 @@ class App extends Component {
             stat = "" + (Math.round(stat * 100)) + "% (" + sv.game.throwCount + "/" + sv.game.editedCount + ")";
         }
 
-        let proxyPort = window.location.port;
-        if (proxyPort === "3000") {
-            proxyPort = "9000";
-        }
-
         return (
             <div id="scoreboard" className="container-fluid">
                 <div className="row title">{ sv.game.name }</div>
@@ -95,7 +120,7 @@ class App extends Component {
                 <div id="stat">{ stat }</div>
                 {/*<div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>*/}
 
-                <Websocket url={'ws://'+window.location.hostname+':' + this.state.proxyPort + '/ws/' + this.state.boardId} onMessage={this.onMessage}/>
+                <Websocket url={this.state.wsUrl} onMessage={this.onMessage}/>
             </div>
         );
     }
