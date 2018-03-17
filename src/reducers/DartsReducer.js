@@ -148,6 +148,9 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
             if (currentPlayer.score - currentThrow < 0) {
                 roundValid = false;
             }
+            if (currentPlayer.score - currentThrow === 1 && ns.game.doubleOut) {
+                roundValid = false;
+            }
             if (currentPlayer.score - currentThrow < 2 && ns.game.doubleOut && mod !== 2) {
                 roundValid = false;
             }

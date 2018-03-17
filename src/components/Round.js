@@ -1,4 +1,5 @@
 import React from "react";
+import strings from '../utils/localization'
 
 export default class Round extends React.Component {
     render () {
@@ -26,7 +27,7 @@ export default class Round extends React.Component {
             return a;
         }, 0);
         if (!this.props.data.valid) {
-            roundSum = 0;
+            roundSum = strings.bust;
         }
         if (this.props.data.throws.length === 0) {
             roundSum = <span>&nbsp;</span>

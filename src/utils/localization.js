@@ -42,6 +42,7 @@ let translations = {
     cancel: ["Mégse", "Cancel"],
     delete: ["Törlés", "Delete"],
     save: ["Mentés", "Save"],
+    bust: ["Sok", "Bust"],
     xxx: ["", ""],
 };
 
