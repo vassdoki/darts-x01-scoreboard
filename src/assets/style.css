@@ -1,3 +1,36 @@
+/* header, game name */
+.title {
+    font-size: 3.5em;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+/* names */
+.one_person .name {
+    text-align: center;
+    font-size: 60pt;
+    background-color: #242f35;
+    margin: 0;
+    padding: 15px;
+}
+/* one throw */
+.details .btn {
+    width: 90px;
+    padding: 10px 10px;
+    font-size: 3.5em;
+}
+/* round score */
+.btn-overall {
+    background-color: #242f35;
+    font-size: 4.2em !important;
+    padding: 5px !important;
+    font-weight: 500;
+}
+
+
+
+
 html {
     height: 100%;
     box-sizing: border-box;
@@ -78,23 +111,14 @@ body {
 .btn {
     outline: 0 !important;
 }
-.details .btn {
-    width: 50px;
-    padding: 10px 10px;
-    font-size: 2em;
-}
 .one_person h1 {
     font-size: 4em;
     margin: 0;
 }
-.btn-overall {
-    background-color: #242f35;
-    font-size: 2.5em !important;
-    padding: 5px !important;
-}
 .btn-missed {
     text-decoration: line-through;
     background-color: #263238;
+    color: #9b957f;
     padding-right: 1px;
 }
 .btn-empty {
@@ -116,23 +140,10 @@ body {
 .name {
     font-family: "Play", sans-serif;
 }
-.one_person .name {
-    text-align: center;
-    font-size: 30pt;
-    background-color: #242f35;
-    margin: 0;
-    padding: 15px;
-}
 .overall_score {
     background-color: #3b444b;
     text-align: center;
     font-size: 75pt;
-}
-.title {
-    font-size: 2.3em;
-    text-align: center;
-    margin-top: 20px;
-    margin-bottom: 10px;
 }
 
 #stat {
