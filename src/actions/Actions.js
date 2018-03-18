@@ -30,6 +30,7 @@ export function winGame(player, game, boardId) {
                     throw_count: stat.throwCount,
                     throw_average: (stat.sum / stat.throwCount),
                     throw_sum: stat.sum,
+                    round3sum: stat.round3sum,
                     details: JSON.stringify(game)
             }).then((response) => {
                 return response;
