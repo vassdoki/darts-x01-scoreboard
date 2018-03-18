@@ -25,14 +25,12 @@ export function winGame(player, game, boardId) {
         dispatch({
             type: "WIN_GAME",
             payload: axios.post("/command/winGame/" + boardId, {
-                params: {
                     winner: cp.id,
                     round_count: cp.rounds.length,
                     throw_count: stat.throwCount,
                     throw_average: (stat.sum / stat.throwCount),
                     throw_sum: stat.sum,
                     details: JSON.stringify(game)
-                }
             }).then((response) => {
                 return response;
             })
