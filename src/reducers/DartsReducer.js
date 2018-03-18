@@ -54,17 +54,24 @@ export default function reducer(state={
 }, action) {
 
     switch (action.type) {
-        case "WIN_GAME": {
-            var newGameState = {...state}
-            const cp = action.player
-            const stat = createStat(cp)
-            const param = "winner=" + cp.id + "&round_count=" + cp.rounds.length + "&throw_count=" + stat.throwCount + "&throw_average=" + (stat.sum / stat.throwCount) + "&throw_sum=" + stat.sum
-            if (param !== newGameState.game.winnerStat) {
-                fetch("http://localhost:9000/command/winGame/1?" + param)
-                newGameState.game.winner = cp.name
-                newGameState.game.winnerStat = ""
+        case "WIN_GAME_PENDING" :{
+            return {...state,
+                // winner: state.game.id
+                netStatus: "WinGame error"
             }
-            return newGameState
+        }
+        case "WIN_GAME_REJECTED" :{
+            return {...state,
+                netStatus: "WinGame error"
+            }
+        }
+        case "WIN_GAME_FULFILLED" :{
+            let st = {...state}
+            st.netStatus = "WinGame done";
+            st.winner = "saved";
+            return st;
+        }
+        case "WINNER_ALREADY_SENT" :{
         }
         case "INSERT_SCORE": {
             return insertThrow({...state}, action.num, action.mod, action.id, 0, action.currentPlayer, action.round);
@@ -108,18 +115,6 @@ export default function reducer(state={
     }
 }
 
-function createStat(p) {
-    var throwCount = 0
-    var sum = 0
-    p.rounds.forEach(r => {
-        if (r.valid) {
-            sum += r.throws.reduce((a, t) => a += t.num * t.mod, 0);
-            console.log("throwCount: " + throwCount + " length:" + r.throws.length)
-            throwCount += r.throws.length
-        }
-    });
-    return {throwCount: throwCount, sum:sum}
-}
 function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     ns.game.throwCount++;
     var switchToNextPlayer = false; // switch to next player if this is the third throw
@@ -132,6 +127,9 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     // store the new throw
     ns.game.currentPlayer = currentPlayerNum
     var currentPlayer = ns.players[ns.game.currentPlayer];
+    if (currentPlayer === undefined || ! currentPlayer.hasOwnProperty("rounds")) {
+        return ns;
+    }
     if (currentPlayer.rounds.length === 0) {
         currentPlayer.rounds.push({count:1, valid: roundValid, throws:[]});
     }
@@ -168,6 +166,10 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
         }
         currentRound.valid = roundValid;
         currentRound.throws.push({num:num, mod: mod, id: id});
+    }
+
+    if (ns.game.winner === "" && currentPlayer.score === 0 && currentRound.valid) {
+        ns.game.winner = "needs save"
     }
 
     if (currentRound.throws.length === 3 || mod === -1) { //  || mod === -1

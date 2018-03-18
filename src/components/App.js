@@ -67,10 +67,14 @@ class App extends Component {
             if (parsedMessage.game.gameType === "x01") {
                 this.props.dispatch(startGame(parsedMessage));
             } else {
-                document.location.href="/game/scoreboard/" + this.state.boardId;
+                if (window.location.port !== "3000") {
+                    document.location.href = "/game/scoreboard/" + this.state.boardId;
+                }
             }
         } else if (parsedMessage.command === 'restart') {
-            document.location.href="/game/scoreboard" + this.state.boardId;
+            if (window.location.port !== "3000") {
+                document.location.href = "/game/scoreboard" + this.state.boardId;
+            }
         } else if (parsedMessage.command === 'insert_throw') {
             this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id, parsedMessage.currentPlayer, parsedMessage.round));
         } else {
@@ -81,7 +85,7 @@ class App extends Component {
 
     onWinGame = function(player) {
         console.log("on win game")
-        this.props.dispatch(winGame(player));
+        this.props.dispatch(winGame(player, this.props.darts, this.state.boardId));
     }
 
     render() {
