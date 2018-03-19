@@ -26,15 +26,17 @@ export default class Round extends React.Component {
             a += t.num * t.mod;
             return a;
         }, 0);
+        let bustClass = "";
         if (!this.props.data.valid) {
             roundSum = strings.bust;
+            bustClass = "bust";
         }
         if (this.props.data.throws.length === 0) {
             roundSum = <span>&nbsp;</span>
         }
         return <tr>
                 { thr }
-                <td className="btn btn-lg btn-default btn-overall">{roundSum}</td>
+                <td className={"btn btn-lg btn-default btn-overall " + bustClass}>{roundSum}</td>
         </tr>
 
     }

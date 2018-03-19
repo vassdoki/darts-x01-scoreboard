@@ -2,8 +2,8 @@
 .title {
     font-size: 3.5em;
     text-align: center;
-    margin-top: 10px;
-    margin-bottom: 5px;
+    margin-top: 2px;
+    margin-bottom: -4px;
 }
 
 /* names */
@@ -12,20 +12,13 @@
     font-size: 60pt;
     background-color: #242f35;
     margin: 0;
-    padding: 15px;
+    padding: 4px;
 }
 /* one throw */
 .details .btn {
     width: 90px;
     padding: 10px 10px;
     font-size: 3.5em;
-}
-/* round score */
-.btn-overall {
-    background-color: #242f35;
-    font-size: 4.2em !important;
-    padding: 5px !important;
-    font-weight: 500;
 }
 
 
@@ -111,6 +104,20 @@ body {
 .btn {
     outline: 0 !important;
 }
+/* round score */
+.btn-overall {
+    background-color: #242f35;
+    color: #fff8a1;
+    font-size: 4.2em !important;
+    padding: 5px !important;
+    font-weight: 500;
+}
+
+.bust {
+    font-size: 2em !important;
+    margin-top: 23px;
+}
+
 .one_person h1 {
     font-size: 4em;
     margin: 0;
@@ -144,6 +151,17 @@ body {
     background-color: #3b444b;
     text-align: center;
     font-size: 75pt;
+    margin-bottom: -25px;
+    margin-top: 0px;
+}
+.score_msg {
+    background-color: #3b444b;
+    text-align: center;
+    font-size: 30pt;
+    color: #fffd7a;
+}
+.score_msg_bust {
+    background-color: #D3504F;
 }
 
 #stat {
@@ -152,6 +170,8 @@ body {
     right: 0;
     color: yellow;
     font-size: 35pt;
+    background-color: black;
+    opacity: 0.7;
 }
 #imind {
     position: fixed;
@@ -159,4 +179,9 @@ body {
     left: 0;
     margin: 6px;
     opacity: 0.8;
+}
+.roundNum {
+    position: fixed;
+    top: 0;
+    left: 0;
 }

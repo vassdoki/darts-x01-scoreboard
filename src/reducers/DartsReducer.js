@@ -56,12 +56,13 @@ export default function reducer(state={
     switch (action.type) {
         case "WIN_GAME_PENDING" :{
             return {...state,
-                // winner: state.game.id
+                winner: "pending",
                 netStatus: "WinGame error"
             }
         }
         case "WIN_GAME_REJECTED" :{
             return {...state,
+                winner: "",
                 netStatus: "WinGame error"
             }
         }
@@ -116,7 +117,9 @@ export default function reducer(state={
 }
 
 function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
-    ns.game.throwCount++;
+    if (mod >= 0) {
+        ns.game.throwCount++;
+    }
     var switchToNextPlayer = false; // switch to next player if this is the third throw
     var roundValid = true;
 

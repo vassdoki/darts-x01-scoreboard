@@ -114,8 +114,13 @@ class App extends Component {
             stat = "" + (Math.round(stat * 100)) + "% (" + sv.game.throwCount + "/" + sv.game.editedCount + ")";
         }
 
+        let roundNum = 1;
+        if (sv.players !== undefined && sv.players.length > 0 &&  sv.players[0].rounds !== undefined) {
+            roundNum = sv.players[0].rounds.length
+        }
         return (
             <div id="scoreboard" className="container-fluid">
+                <div className="roundNum title">{strings.roundNum}: { roundNum }</div>
                 <div className="row title">{ sv.game.name }</div>
 
                 <div className="row no-gutter">

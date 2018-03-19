@@ -43,7 +43,7 @@ let translations = {
     delete: ["Törlés", "Delete"],
     save: ["Mentés", "Save"],
     bust: ["Sok", "Bust"],
-    xxx: ["", ""],
+    roundNum: ["Kör", "Round"],
 };
 
 let translationKeys = Object.keys(translations);
