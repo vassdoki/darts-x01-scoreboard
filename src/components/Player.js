@@ -1,19 +1,12 @@
 import React, {Component} from "react";
 import Round from './Round'
-import {getFinish} from "../utils/DartseeUtils";
+import {getFinish1, getFinish2, getFinish3} from "../utils/DartseeUtils";
 import strings from '../utils/localization'
 
 export default class Player extends Component{
     constructor(props) {
         super(props);
         this.state = {gameFinished: false, lastSum: -1, winner: ""}
-    }
-    componentDidMount () {
-    }
-    componentWillReceiveProps(newProps) {
-        if (newProps.winner === "needs save" && this.props.winner !== "needs save") {
-            this.props.onWin(this.props.data)
-        }
     }
 
     render () {
@@ -29,17 +22,24 @@ export default class Player extends Component{
             emptyRound = <Round key={this.props.roundCount -1} data={ {throws:[]} }/>
         }
 
-        let finish = getFinish(sum);
+        let finish = " - ";
         let msgClass = "score_msg";
-        if (finish === "") {
-            finish = <span>&nbsp;</span>
-        } else {
-            // console.log((finish.match(/ /g) || []).length);
-            if (round.throws.length > 0 && round.throws.length < 3 && (finish.match(/ /g) || []).length + 1 > 3 - round.throws.length) {
-                finish = " - ";
+        if (round !== undefined) {
+            if (round.throws.length === 0 || round.throws.length === 3) {
+                finish = getFinish3(sum);
+            }
+            if (round.throws.length === 1) {
+                finish = getFinish2(sum);
+            }
+            if (round.throws.length === 2) {
+                finish = getFinish1(sum);
             }
         }
-        if (round.throws.length > 0 && round.throws.length < 3 && !round.valid) {
+
+        if (finish === "") {
+            finish = <span>&nbsp;</span>
+        }
+        if (round !== undefined && round.throws.length > 0 && round.throws.length < 3 && !round.valid) {
             finish = strings.bust;
             msgClass = msgClass + " score_msg_bust";
         }

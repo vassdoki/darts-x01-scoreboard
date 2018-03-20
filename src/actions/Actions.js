@@ -17,10 +17,11 @@ export function startGame(config) {
         config: config
     };
 }
-export function winGame(player, game, boardId) {
-    // var newGameState = {...state}
-    const cp = player
-    const stat = createStat(cp)
+export function winGame(game, players, boardId) {
+    const playerId = game.winnerPlayerId;
+    const player = players.filter(p => p.id === playerId)[0];
+    const cp = player;
+    const stat = createStat(cp);
     return (dispatch) =>
         dispatch({
             type: "WIN_GAME",

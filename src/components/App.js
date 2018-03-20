@@ -83,10 +83,16 @@ class App extends Component {
         }
     }
 
-    onWinGame = function(player) {
-        console.log("on win game")
-        this.props.dispatch(winGame(player, this.props.darts, this.state.boardId));
+    onWinGame = function(game, players) {
+        this.props.dispatch(winGame(game, players, this.state.boardId));
     }
+
+    componentWillReceiveProps(newProps) {
+        if (newProps.darts.game.winner === "needs save" && this.props.darts.winner !== "needs save") {
+            this.onWinGame(newProps.darts.game, newProps.darts.players);
+        }
+    }
+
 
     render() {
         var sv = this.props.darts;
@@ -115,7 +121,7 @@ class App extends Component {
         }
 
         let roundNum = 1;
-        if (sv.players !== undefined && sv.players.length > 0 &&  sv.players[0].rounds !== undefined) {
+        if (sv.players !== undefined && sv.players.length > 0 &&  sv.players[0].rounds !== undefined && sv.players[0].rounds.length > 0) {
             roundNum = sv.players[0].rounds.length
         }
         return (

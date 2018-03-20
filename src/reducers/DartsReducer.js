@@ -55,24 +55,22 @@ export default function reducer(state={
 
     switch (action.type) {
         case "WIN_GAME_PENDING" :{
-            return {...state,
-                winner: "pending",
-                netStatus: "WinGame error"
-            }
+            let s = {...state};
+            s.game.winner = "pending";
+            return s;
         }
         case "WIN_GAME_REJECTED" :{
-            return {...state,
-                winner: "",
-                netStatus: "WinGame error"
-            }
+            let s = {...state};
+            s.game.winner = "";
+            return s;
         }
         case "WIN_GAME_FULFILLED" :{
-            let st = {...state}
-            st.netStatus = "WinGame done";
-            st.winner = "saved";
-            return st;
+            let s = {...state};
+            s.game.winner = "saved";
+            return s;
         }
         case "WINNER_ALREADY_SENT" :{
+            return {...state};
         }
         case "INSERT_SCORE": {
             return insertThrow({...state}, action.num, action.mod, action.id, 0, action.currentPlayer, action.round);
@@ -172,7 +170,8 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     }
 
     if (ns.game.winner === "" && currentPlayer.score === 0 && currentRound.valid) {
-        ns.game.winner = "needs save"
+        ns.game.winner = "needs save";
+        ns.game.winnerPlayerId = currentPlayer.id;
     }
 
     if (currentRound.throws.length === 3 || mod === -1) { //  || mod === -1

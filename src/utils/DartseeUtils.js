@@ -66,7 +66,49 @@ export function createStat(p) {
     return {throwCount: throwCount, sum:sum, round3sum: round3sum}
 }
 
-const finish = {
+const finish2 = {
+    "100":"T20 D20",
+    "98":"T20 D190",
+    "97":"T19 D20",
+    "96":"T20 D18",
+    "95":"T19 D19",
+    "94":"T18 D20",
+    "93":"T19 D18",
+    "92":"T20 D16",
+    "91":"T17 D20",
+    "90":"T20 D15",
+    "89":"T19 D16",
+    "88":"T19 D20",
+    "87":"T17 D18",
+    "86":"T18 D16",
+    "85":"T15 D20",
+    "84":"T20 D12",
+    "83":"T17 D16",
+    "82":"T14 D20",
+    "81":"T19 D20",
+    "80":"T20 D10",
+    "79":"T13 D20",
+    "78":"T18 D12",
+    "77":"T19 D10",
+    "76":"T20 D8",
+    "75":"T17 D12",
+    "74":"T14 D16",
+    "73":"T19 D8",
+    "72":"T16 D12",
+    "71":"T13 D16",
+    "70":"T10 D20",
+    "69":"T15 D12",
+    "68":"T20 D4",
+    "67":"T17 D8",
+    "66":"T10 D18",
+    "65":"T19 D4",
+    "64":"T16 D8",
+    "63":"T13 D12",
+    "62":"T10 D16",
+    "61":"T15 D16",
+    "60":"20 D20"
+};
+const finish3 = {
     "2":"D1",
     "3":"1 D1",
     "4":"D2",
@@ -236,10 +278,31 @@ const finish = {
     "168":"-",
     "169":"-",
     "170":"T20 T20 Bull"};
-export function getFinish(score) {
-    if (finish.hasOwnProperty(score)) {
-        return finish[score];
+export function getFinish3(score) {
+    if (finish3.hasOwnProperty(score)) {
+        return finish3[score];
     } else {
         return "";
     }
+}
+export function getFinish2(score) {
+    if (finish2.hasOwnProperty(score)) {
+        return finish2[score];
+    } else {
+        return getFinish1(score);
+    }
+}
+
+export function getFinish1(score) {
+    let finish = "";
+    if (score === 50) {
+        finish = "BU";
+    } else {
+        if (score % 2 === 0 && score <= 40) {
+            finish = "D" + (score / 2)
+        } else {
+            finish = "";
+        }
+    }
+    return finish;
 }
