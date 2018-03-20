@@ -95,7 +95,7 @@ export default function reducer(state={
                     if (Object.keys(config.game.players[playerNum].rounds).length > roundNum) {
                         if (Object.keys(config.game.players[playerNum].rounds[roundNum].throws).length > 0) {
                             var throws = config.game.players[playerNum].rounds[roundNum].throws;
-                            mapObject(throws, (key, t) => insertThrow(ns, t.score, t.modifier, t.id, t.editedCount, playerNum, roundNum));
+                            mapObject(throws, itCallback, {ns: ns, playerNum: playerNum, roundNum: roundNum});
                         } else {
                             // this round has no throws
                             ns["players"][playerNum].rounds.push({count:roundNum+1, valid: true, throws:[]});
@@ -112,6 +112,10 @@ export default function reducer(state={
             }
         }
     }
+}
+
+function itCallback(temp, t, p) {
+    insertThrow(p.ns, t.score, t.modifier, t.id, t.editedCount, p.playerNum, p.roundNum)
 }
 
 function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
