@@ -18,7 +18,7 @@ export function startGame(config) {
     };
 }
 export function winGame(game, players, boardId) {
-    const playerId = game.winnerPlayerId;
+    const playerId = game.game.winnerPlayerId;
     const player = players.filter(p => p.id === playerId)[0];
     const cp = player;
     const stat = createStat(cp);

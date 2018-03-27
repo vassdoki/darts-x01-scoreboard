@@ -15,7 +15,7 @@ class App extends Component {
         const urlPart = "501";
         /***********************************************************/
         /*  this is copied to every project, until a nice solution */
-        const boardIdMatcher = new RegExp(`/game/${urlPart}/(.*)`);
+        const boardIdMatcher = new RegExp(`/game/${urlPart}/([^?]*)`);
         const res = boardIdMatcher.exec(document.location.href);
         // TODO: boardId gets the GET parameter also, not very nice
         let boardId = null;
@@ -84,7 +84,7 @@ class App extends Component {
     }
 
     onWinGame = function(game, players) {
-        this.props.dispatch(winGame(game, players, this.state.boardId));
+        this.props.dispatch(winGame(this.props.darts, players, this.state.boardId));
     }
 
     componentWillReceiveProps(newProps) {
