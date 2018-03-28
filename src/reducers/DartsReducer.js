@@ -39,8 +39,8 @@ Store data format:
 
 import strings from '../utils/localization'
 
-const mapObject = (object, callback) => {
-    return Object.keys(object).map( key => callback(key, object[key]) )
+const mapObject = (object, callback, params) => {
+    return Object.keys(object).map( key => callback(key, object[key], params) )
 };
 
 export default function reducer(state={
@@ -94,7 +94,7 @@ export default function reducer(state={
                 for(var playerNum = 0; playerNum < Object.keys(config.game.players).length; playerNum++) {
                     if (Object.keys(config.game.players[playerNum].rounds).length > roundNum) {
                         if (Object.keys(config.game.players[playerNum].rounds[roundNum].throws).length > 0) {
-                            var throws = config.game.players[playerNum].rounds[roundNum].throws;
+                            let throws = config.game.players[playerNum].rounds[roundNum].throws;
                             mapObject(throws, itCallback, {ns: ns, playerNum: playerNum, roundNum: roundNum});
                         } else {
                             // this round has no throws
