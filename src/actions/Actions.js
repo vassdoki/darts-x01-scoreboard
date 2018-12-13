@@ -38,3 +38,10 @@ export function winGame(game, players, boardId) {
             })
         });
 }
+
+export function coreStatus(coreStatus) {
+    return {
+        type: 'CORE_STATUS',
+        coreStatus: coreStatus
+    }
+}

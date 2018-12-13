@@ -50,10 +50,17 @@ export default function reducer(state={
         editedCount: 0,
         winner: ""
     },
-    players: []
+    players: [],
+    coreStatus: "Game loaded"
 }, action) {
 
     switch (action.type) {
+        case "CORE_STATUS": {
+            return Object.assign({}, state, {
+                coreStatus: action.coreStatus
+            })
+
+        }
         case "WIN_GAME_PENDING" :{
             let s = {...state};
             s.game.winner = "pending";
@@ -79,8 +86,8 @@ export default function reducer(state={
             var config = action.config;
             var ns = {};
             ns["game"] = parseConfig(config.game);
-            ns["game"].winner = ""
-            ns["game"].editedCount = 0
+            ns["game"].winner = "";
+            ns["game"].editedCount = 0;
             ns["players"] = mapObject(config.game.players, (playerId, player) => {
                 return {
                     id: player.id,
@@ -130,8 +137,8 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     }
 
     // store the new throw
-    ns.game.currentPlayer = currentPlayerNum
-    var currentPlayer = ns.players[ns.game.currentPlayer];
+    ns.game.currentPlayer = currentPlayerNum;
+    let currentPlayer = ns.players[ns.game.currentPlayer];
     if (currentPlayer === undefined || ! currentPlayer.hasOwnProperty("rounds")) {
         return ns;
     }

@@ -11,7 +11,6 @@ import './assets/style.css';
 import strings from './utils/localization'
 strings.setLanguage('en');
 
-
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
 const middlewares = applyMiddleware(

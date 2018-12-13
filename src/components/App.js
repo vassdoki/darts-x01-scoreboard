@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Websocket from 'react-websocket';
 
 import {connect} from "react-redux";
-import {insertScore, startGame, winGame} from "../actions/Actions";
+import {coreStatus, insertScore, startGame, winGame} from "../actions/Actions";
 import Player from "./Player";
 import strings from '../utils/localization'
 import {parseQueryString} from "../utils/DartseeUtils"
@@ -77,27 +77,29 @@ class App extends Component {
             }
         } else if (parsedMessage.command === 'insert_throw') {
             this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id, parsedMessage.currentPlayer, parsedMessage.round));
+        } else if (parsedMessage.command === 'core_status') {
+            this.props.dispatch(coreStatus(parsedMessage.txt));
         } else {
             console.log("Unknown message from server");
             console.log(parsedMessage);
         }
-    }
+    };
 
     onWinGame = function(game, players) {
-        this.props.dispatch(winGame(this.props.darts, players, this.state.boardId));
-    }
+        this.props.dispatch(winGame(game, players, this.state.boardId));
+    };
 
     componentWillReceiveProps(newProps) {
         if (newProps.darts.game.winner === "needs save" && this.props.darts.winner !== "needs save") {
-            this.onWinGame(newProps.darts.game, newProps.darts.players);
+            this.onWinGame(newProps.darts, newProps.darts.players);
         }
     }
 
 
     render() {
-        var sv = this.props.darts;
+        let sv = this.props.darts;
 
-        var row2class = "col-xs-6 ";
+        let row2class = "col-xs-6 ";
         switch(sv.players.length) {
             case 1: row2class += "col-xs-offset-3"; break;
             case 3: row2class += "col-sm-4"; break;
@@ -107,14 +109,14 @@ class App extends Component {
             default: break;
         }
         const players = sv.players.map((p, i) => {
-            var row3class = "one_person";
+            let row3class = "one_person";
             if (i === sv.game.currentPlayer && sv.players.length > 1) {
                 row3class = "one_person active_person";
             }
-            var id = "player" + i
+            let id = "player" + i;
             return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={id} onWin={this.onWinGame.bind(this)} winner={sv.game.winner} roundCount={sv.players[0].rounds.length}/>
         });
-        var stat = 0;
+        let stat = 0;
         if (sv.game.throwCount > 0) {
             stat = (sv.game.throwCount - sv.game.editedCount) / sv.game.throwCount;
             stat = "" + (Math.round(stat * 100)) + "% (" + sv.game.throwCount + "/" + sv.game.editedCount + ")";
@@ -132,7 +134,7 @@ class App extends Component {
                 <div className="row no-gutter">
                 {players}
                 </div>
-                <div id="stat">{ stat }</div>
+                <div id="stat">{this.props.darts.coreStatus} { stat }</div>
                 {/*<div id="imind"><img src={require('../assets/iMind.png')} alt="iMind" /></div>*/}
 
                 <Websocket url={this.state.wsUrl} onMessage={this.onMessage}/>
