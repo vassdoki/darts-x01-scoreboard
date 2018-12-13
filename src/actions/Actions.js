@@ -11,6 +11,11 @@ export function insertScore(num, mod, id, cp, round) {
         round: round
     };
 }
+export function nextPlayer() {
+    return {
+        type: 'NEXT_PLAYER'
+    };
+}
 export function startGame(config) {
     return {
         type: 'START_GAME',

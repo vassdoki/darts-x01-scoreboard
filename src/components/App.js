@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Websocket from 'react-websocket';
 
 import {connect} from "react-redux";
-import {coreStatus, insertScore, startGame, winGame} from "../actions/Actions";
+import {coreStatus, insertScore, nextPlayer, startGame, winGame} from "../actions/Actions"
 import Player from "./Player";
 import strings from '../utils/localization'
 import {parseQueryString} from "../utils/DartseeUtils"
@@ -34,8 +34,10 @@ class App extends Component {
         let wsUrl = "";
         if (window.location.port === "3000") {
             // running on localhost development environment, connect directly to the local play app
-            proxyHost = "http://localhost:9000";
-            wsUrl = `ws://localhost:9000/ws/${boardId}`;
+            // proxyHost = "http://localhost:9000";
+            const host = "game.eu.dartsee.com:8080"
+            proxyHost = `http://${host}`;
+            wsUrl = `ws://${host}/ws/${boardId}`;
         } else {
             if (window.location.port === 80) {
                 proxyHost = `http://${window.location.hostname}`;
@@ -79,6 +81,8 @@ class App extends Component {
             this.props.dispatch(insertScore(parsedMessage.throw.score, parsedMessage.throw.modifier, parsedMessage.throw.id, parsedMessage.currentPlayer, parsedMessage.round));
         } else if (parsedMessage.command === 'core_status') {
             this.props.dispatch(coreStatus(parsedMessage.txt));
+        } else if (parsedMessage.command === 'next_player') {
+            this.props.dispatch(nextPlayer());
         } else {
             console.log("Unknown message from server");
             console.log(parsedMessage);

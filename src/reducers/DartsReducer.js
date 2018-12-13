@@ -79,6 +79,9 @@ export default function reducer(state={
         case "WINNER_ALREADY_SENT" :{
             return {...state};
         }
+        case "NEXT_PLAYER": {
+            return switchToNextPlayer({...state})
+        }
         case "INSERT_SCORE": {
             return insertThrow({...state}, action.num, action.mod, action.id, 0, action.currentPlayer, action.round);
         }
@@ -86,8 +89,6 @@ export default function reducer(state={
             var config = action.config;
             var ns = {};
             ns["game"] = parseConfig(config.game);
-            ns["game"].winner = "";
-            ns["game"].editedCount = 0;
             ns["players"] = mapObject(config.game.players, (playerId, player) => {
                 return {
                     id: player.id,
@@ -129,12 +130,10 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     if (mod >= 0) {
         ns.game.throwCount++;
     }
-    var switchToNextPlayer = false; // switch to next player if this is the third throw
-    var roundValid = true;
-
     if (editedCount > 0) {
-        ns.game.editedCount++;
+      ns.game.editedCount++;
     }
+    var roundValid = true;
 
     // store the new throw
     ns.game.currentPlayer = currentPlayerNum;
@@ -142,15 +141,14 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
     if (currentPlayer === undefined || ! currentPlayer.hasOwnProperty("rounds")) {
         return ns;
     }
-    if (currentPlayer.rounds.length === 0) {
-        currentPlayer.rounds.push({count:1, valid: roundValid, throws:[]});
-    }
-    if (round > 0) {
-        while(currentPlayer.rounds.length <= round) {
-            currentPlayer.rounds.push({count:currentPlayer.rounds.length, valid: roundValid, throws:[]});
-        }
+    ns.game.currentRound = round
+    while(currentPlayer.rounds.length <= round) {
+        currentPlayer.rounds.push({count:currentPlayer.rounds.length, valid: true, throws:[]});
     }
     var currentRound = currentPlayer.rounds[round];
+    if (currentRound.throws.length === 3) {
+      return ns;
+    }
 
     if (mod !== -1) {
         var currentThrow = num * mod;
@@ -162,6 +160,9 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
                 roundValid = false;
             }
             if (currentPlayer.score - currentThrow < 2 && ns.game.doubleOut && mod !== 2) {
+                roundValid = false;
+            }
+            if (round === 0 && currentRound.throws.length === 0 && ns.game.doubleIn && mod !== 2) {
                 roundValid = false;
             }
             if (roundValid === false) {
@@ -185,26 +186,21 @@ function insertThrow(ns, num, mod, id, editedCount, currentPlayerNum, round) {
         ns.game.winnerPlayerId = currentPlayer.id;
     }
 
-    if (currentRound.throws.length === 3 || mod === -1) { //  || mod === -1
-        switchToNextPlayer = true;
-    }
-
-    if (switchToNextPlayer) {
-        ns.game.currentPlayer = (ns.game.currentPlayer + 1) % ns.players.length;
-    }
-
     return ns;
 }
 
 function parseConfig(c) {
-    var res = {
+  var res = {
         name: "",
         startScore: 0,
         doubleIn: false,
         doubleOut: false,
         currentPlayer: 0,
+        currentRound: 0,
         throwCount: 0,
-        editedCount: 0
+        editedCount: 0,
+        winner: "",
+
     };
     if (c.subtype.includes("x01_score=701")) {
         res.name="701";
@@ -231,4 +227,16 @@ function parseConfig(c) {
         res.doubleIn=false;
     }
     return res;
+}
+
+function switchToNextPlayer(ns) {
+  ns.game.currentPlayer = (ns.game.currentPlayer + 1) % ns.players.length
+  let currentPlayer = ns.players[ns.game.currentPlayer]
+  if (ns.game.currentPlayer === 0) {
+    ns.game.currentRound++
+  }
+  while (currentPlayer.rounds.length <= ns.game.currentRound) {
+    currentPlayer.rounds.push({count: currentPlayer.rounds.length, valid: true, throws: []});
+  }
+  return ns
 }
