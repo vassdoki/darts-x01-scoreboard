@@ -15,11 +15,17 @@ export default class Round extends React.Component {
                     case 3: throwClass += "btn-triple"; break;
                     default: break;
                 }
-                // TODO: RANDOM KEY is bad!
-                thr.push(<td key={Math.random()}><button className={throwClass}>{t.num}</button></td>)
+                thr.push(<td key={i}><button className={throwClass}>{t.num}</button></td>)
             } else {
-                // TODO: RANDOM KEY is bad!
-                thr.push(<td key={Math.random()}><button className="btn btn-lg btn-default btn-empty">&nbsp;</button></td>)
+                if (i-1 === this.props.data.throws.length && this.props.activePlayer && this.props.lastRound) {
+                  thr.push(<td key={i}>
+                        <button className="btn btn-lg btn-default btn-empty curr-throw">&nbsp;</button>
+                      </td>)
+                } else {
+                  thr.push(<td key={i}>
+                        <button className="btn btn-lg btn-default btn-empty">&nbsp;</button>
+                      </td>)
+                }
             }
         }
         var roundSum = this.props.data.throws.reduce((a,t) => {

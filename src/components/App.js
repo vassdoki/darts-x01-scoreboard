@@ -114,11 +114,21 @@ class App extends Component {
         }
         const players = sv.players.map((p, i) => {
             let row3class = "one_person";
+            let activePlayer = false
             if (i === sv.game.currentPlayer && sv.players.length > 1) {
                 row3class = "one_person active_person";
+                activePlayer = true
             }
             let id = "player" + i;
-            return <Player paramClassName2={row2class} paramClassName3={row3class} data={p} key={id} onWin={this.onWinGame.bind(this)} winner={sv.game.winner} roundCount={sv.players[0].rounds.length}/>
+            return <Player paramClassName2={row2class}
+                           paramClassName3={row3class}
+                           data={p}
+                           key={id}
+                           onWin={this.onWinGame.bind(this)}
+                           winner={sv.game.winner}
+                           roundCount={sv.players[0].rounds.length}
+                           activePlayer={activePlayer}
+            />
         });
         let stat = 0;
         if (sv.game.throwCount > 0) {

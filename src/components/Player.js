@@ -11,15 +11,19 @@ export default class Player extends Component{
 
     render () {
         const round = this.props.data.rounds[this.props.data.rounds.length - 1];
-        const rounds = this.props.data.rounds.map((r, i) => <Round key={i} data={ this.props.data.rounds[this.props.data.rounds.length - i - 1] }/>)
+        const rounds = this.props.data.rounds.map((r, i) => <Round
+          key={i}
+          data={ this.props.data.rounds[this.props.data.rounds.length - i - 1] }
+          activePlayer={this.props.activePlayer}
+          lastRound={0 === i}
+        />)
         var sum = this.props.data.score;
         if (sum === 0) {
             sum = "WIN!";
         }
-
         var emptyRound = ""
         if (this.props.roundCount > this.props.data.rounds.length) {
-            emptyRound = <Round key={this.props.roundCount -1} data={ {throws:[]} }/>
+            emptyRound = <Round key={this.props.roundCount -1} data={ {throws:[]} } activePlayer={this.props.activePlayer} lastRound={true}/>
         }
 
         let finish = " - ";
